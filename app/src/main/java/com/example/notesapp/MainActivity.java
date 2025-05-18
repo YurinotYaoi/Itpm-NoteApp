@@ -28,4 +28,14 @@ public class MainActivity extends AppCompatActivity {
         Intent i = new Intent(this, EditNotes.class);
         startActivity(i);
     }
+
+    public void GoToFolder(View view) {
+        Intent i = new Intent(this, FolderActivity.class);
+        startActivity(i);
+    }
+
+    public void GoToNote(View view) {
+        Intent i = new Intent(this, NoteActivity.class);
+        startActivity(i);
+    }
 }

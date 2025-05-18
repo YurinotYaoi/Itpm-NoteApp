@@ -77,7 +77,15 @@
         android:id="@+id/btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="FolderCreate"
+        android:onClick="GoToFolder"/>
+
+    <Button
+        android:id="@+id/btnCreateNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NoteCreate"
+        android:onClick="GoToNote"/>
 
 </LinearLayout>
 

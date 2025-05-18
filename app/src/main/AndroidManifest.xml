@@ -16,10 +16,10 @@
             android:name=".EditNotes"
             android:exported="false" />
         <activity
-            android:name=".Notes"
+            android:name=".NoteActivity"
             android:exported="false" />
         <activity
-            android:name=".Folder"
+            android:name=".FolderActivity"
             android:exported="false" />
         <activity
             android:name=".Login"

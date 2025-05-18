@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Notes">
+    tools:context=".NoteActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
             </LinearLayout>
 
             <ListView
+                android:id="@+id/lvNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="100dp">
@@ -50,7 +51,7 @@
             </ListView>
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnCreateNote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

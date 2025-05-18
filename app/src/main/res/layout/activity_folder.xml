@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Folder">
+    tools:context=".FolderActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -42,15 +42,26 @@
                         android:text="Folder" />
             </LinearLayout>
 
-            <ListView
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+            <ListView
+                android:id="@+id/lvFolder"
+                android:layout_width="match_parent"
+                android:layout_height="295dp"
                 android:layout_marginTop="100dp">
 
             </ListView>
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnCreateFolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
