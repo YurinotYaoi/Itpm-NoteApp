@@ -59,9 +59,18 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginLeft="100dp"
-                android:layout_weight="1"
+
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/delete" />
+
+            <ImageButton
+                android:id="@+id/ivOpen"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="1dp"
+
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/open" />
 
 
         </LinearLayout>

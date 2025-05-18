@@ -1,35 +1,66 @@
 package com.example.notesapp;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import jp.wasabeef.richeditor.RichEditor;
 
 public class EditNotes extends AppCompatActivity {
+    SQLiteDatabase db;
+    Cursor c;
 
     Button btn_toggleEdit;
+    TextView tv_title;
 
     private RichEditor mEditor;
     private TextView mPreview;
 
-    private boolean isTextColorBlack = true; //the color is black first
-    private boolean isEditing = true; //the editor is in edit mode
+    private boolean isTextColorBlack = true;
+    private boolean isEditing = true;
+    private int noteId = -1; // Initialize with -1 for new notes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_notes);
 
+        db = openOrCreateDatabase("NotesDB", MODE_PRIVATE, null);
+        String sql = "CREATE TABLE IF NOT EXISTS Notes(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, folderId INTEGER)";
+        db.execSQL(sql);
+
         mEditor = findViewById(R.id.editor);
         mPreview = findViewById(R.id.preview);
+        tv_title = findViewById(R.id.tvTitle);
+        btn_toggleEdit = findViewById(R.id.btnToggleEdit);
 
         setupEditor();
         setupToolbarButtons();
+
+        Intent intent = getIntent();
+        noteId = intent.getIntExtra("noteId", -1);
+        String noteTitle = intent.getStringExtra("noteTitle");
+        String noteContent = intent.getStringExtra("noteContent");
+
+        if (noteTitle != null) {
+            tv_title.setText(noteTitle);
+        } else {
+            tv_title.setText("New Note"); // Default title for new notes
+        }
+
+        if (noteContent != null) {
+            mEditor.setHtml(noteContent);
+        } else {
+            mEditor.setPlaceholder("Start typing your note...");
+        }
     }
 
     private void setupEditor() {
@@ -39,7 +70,7 @@ public class EditNotes extends AppCompatActivity {
         mEditor.setPadding(10, 10, 10, 10);
         mEditor.setPlaceholder("Insert text here...");
         mEditor.setOnTextChangeListener(text -> mPreview.setText(text));
-        mEditor.setInputEnabled(true); //edit mode is on by default
+        mEditor.setInputEnabled(true);
     }
 
     private void setupToolbarButtons() {
@@ -60,32 +91,34 @@ public class EditNotes extends AppCompatActivity {
         findViewById(R.id.action_insert_checkbox).setOnClickListener(v -> mEditor.insertTodo());
 
         findViewById(R.id.action_txt_color).setOnClickListener(v -> {
-            //toggles between color black and color red lang haha
-            if (isTextColorBlack) {
-                mEditor.setTextColor(Color.RED);
-            } else {
-                mEditor.setTextColor(Color.BLACK);
-            }
             isTextColorBlack = !isTextColorBlack;
+            mEditor.setTextColor(isTextColorBlack ? Color.BLACK : Color.RED);
         });
 
-        btn_toggleEdit = findViewById(R.id.btnToggleEdit);
         btn_toggleEdit.setOnClickListener(v -> {
-            if (isEditing) {
-                // Save and switch to reading mode
-                String currentContent = mEditor.getHtml(); // get HTML content if needed
-                // TODO: Save content (e.g., to database or file)
-
-                mEditor.setInputEnabled(false); // disable editing
-                btn_toggleEdit.setText("Edit");  // change button text
-                isEditing = false;
-            } else {
-                // Switch back to editing mode
-                mEditor.setInputEnabled(true);
-                btn_toggleEdit.setText("Save");
-                isEditing = true;
+            isEditing = !isEditing;
+            mEditor.setInputEnabled(isEditing);
+            btn_toggleEdit.setText(isEditing ? "Save" : "Edit");
+            // Only save when transitioning from edit to read mode
+            if (!isEditing) {
+                saveNote();
             }
+            // If transitioning from read to edit, don't save yet.
         });
-
     }
+
+    private void saveNote() {
+        String updatedContent = mEditor.getHtml();
+        String updatedTitle = tv_title.getText().toString().trim();
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("noteId", noteId);
+        resultIntent.putExtra("noteTitle", updatedTitle);
+        resultIntent.putExtra("noteContent", updatedContent);
+
+        setResult(RESULT_OK, resultIntent);
+        finish(); // Go back to NoteActivity
+    }
+
+
 }
