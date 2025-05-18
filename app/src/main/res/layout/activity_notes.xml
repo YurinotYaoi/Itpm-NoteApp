@@ -6,18 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".NoteActivity">
+    tools:context=".NoteActivity"
+
+    android:background="@drawable/background"
+    android:padding="20px">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,11 +27,19 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/xmlbtnback"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:background="@drawable/btn_oblong"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
                     android:text="Back"
-                    android:layout_marginLeft="20dp"/>
+                    android:layout_marginLeft="20dp"
+
+                    android:onClick="GoToFolder"/>
 
                 <TextView
                     android:id="@+id/textView4"
@@ -45,8 +54,8 @@
             <ListView
                 android:id="@+id/lvNote"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="100dp">
+                android:layout_height="500dp"
+                android:layout_marginTop="10dp">
 
             </ListView>
 
@@ -55,8 +64,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="100dp"
-                android:text="Create Notes" />
+                android:layout_marginTop="10dp"
+                android:text="Create Notes"
+                android:padding="10dp"
+
+                android:background="@drawable/btn_oblong"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
 
         </LinearLayout>
     </ScrollView>

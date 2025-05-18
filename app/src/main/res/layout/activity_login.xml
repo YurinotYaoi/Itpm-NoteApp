@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_margin="30dp"
-    tools:context=".Login">
+    tools:context=".Login"
+
+    android:background="@drawable/background"
+    android:padding="20px">
 
 
     <TextView
@@ -16,6 +18,10 @@
         android:textSize="30sp"
         android:layout_marginTop="80dp"
         android:gravity="center"
+
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat"
+        android:textStyle="bold"
         android:text="Login Security" />
 
     <TextView
@@ -23,6 +29,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
+
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat"
+        android:textStyle="bold"
         android:text="Username" />
 
     <EditText
@@ -39,6 +49,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat"
+        android:textStyle="bold"
         android:text="Password" />
 
     <EditText
@@ -55,8 +69,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:onClick="ProcessLogin"
-        android:text="Login" />
+        android:text="Login"
+
+        android:background="@drawable/btn_oblong"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+
+        android:onClick="GoToFolder"/>
 
     <TextView
         android:id="@+id/textView8"
@@ -64,5 +85,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:onClick="GoToRegister"
+
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat"
+        android:textStyle="bold"
         android:text="No account yet? Register here." />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.notesapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -61,5 +62,9 @@ public class NoteActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
+    public void GoToFolder(View view) {
+        Intent i = new Intent(this, FolderActivity.class);
+        startActivity(i);
     }
 }
