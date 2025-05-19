@@ -41,7 +41,7 @@ public class NoteActivity extends AppCompatActivity {
         btnCreateNote = findViewById(R.id.btnCreateNote);
 
         notes = dbHelper.getAllNotes(); // Initial load
-        myAdapter = new NoteAdapter(this, notes);
+        myAdapter = new NoteAdapter(this, notes, dbHelper);
         lv_note.setAdapter(myAdapter);
 
         btnCreateNote.setOnClickListener(v -> {
@@ -54,7 +54,7 @@ public class NoteActivity extends AppCompatActivity {
 
             builder.setPositiveButton("Create", (dialog, which) -> {
                 String noteTitle = input.getText().toString().trim();
-                if (!noteTitle.isEmpty()) {
+                if (!noteTitle.isEmpty()) { //currently folder Id is hardcoded to zero
                     long id = dbHelper.addNote(noteTitle, null, 0);
                     notes.add(new Note((int) id, noteTitle, null, 0));
                     myAdapter.notifyDataSetChanged();
@@ -76,26 +76,24 @@ public class NoteActivity extends AppCompatActivity {
         myAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK && data != null) {
-            int updatedNoteId = data.getIntExtra("noteId", -1);
-            String updatedTitle = data.getStringExtra("noteTitle");
-            String updatedContent = data.getStringExtra("noteContent");
-
-            if (updatedNoteId != -1) {
-                dbHelper.updateNote(updatedNoteId, updatedTitle, updatedContent, 0);
-            }
-        }
-    }
+    //useless thing gemini put. I'll see this later
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK && data != null) {
+//            int updatedNoteId = data.getIntExtra("noteId", -1);
+//            String updatedTitle = data.getStringExtra("noteTitle");
+//            String updatedContent = data.getStringExtra("noteContent");
+//
+//            if (updatedNoteId != -1) {
+//                dbHelper.updateNote(updatedNoteId, updatedTitle, updatedContent, 0);
+//            }
+//        }
+//    }
 
     public void loadNotesFromDB() {
         notes.clear();
         notes.addAll(dbHelper.getAllNotes());
     }
 
-    public void deleteNoteFromDB(int id) {
-        dbHelper.deleteNote(id);
-    }
 }

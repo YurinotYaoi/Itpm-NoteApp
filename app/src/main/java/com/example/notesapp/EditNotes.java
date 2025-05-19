@@ -120,7 +120,7 @@ public class EditNotes extends AppCompatActivity {
         resultIntent.putExtra("noteTitle", updatedTitle);
         resultIntent.putExtra("noteContent", updatedContent);
 
-        setResult(RESULT_OK, resultIntent);
+//        setResult(RESULT_OK, resultIntent); useless thing gemini put
         finish();
     }
 

@@ -21,11 +21,13 @@ public class NoteAdapter extends ArrayAdapter<Note> {
 
     private Activity context;
     private ArrayList<Note> Items;
+    private NoteDBHelper dbHelper;
 
-    public NoteAdapter(Activity context, ArrayList<Note> Items) {
+    public NoteAdapter(Activity context, ArrayList<Note> Items, NoteDBHelper dbHelper) {
         super(context, R.layout.item_note, Items);
         this.context = context;
         this.Items = Items;
+        this.dbHelper = dbHelper;
     }
 
     @NonNull
@@ -57,17 +59,13 @@ public class NoteAdapter extends ArrayAdapter<Note> {
                             .setTitle("Delete Note")
                             .setMessage("Are you sure you want to delete \"" + deletedNoteTitle + "\"?")
                             .setPositiveButton("Delete", (dialog, which) -> {
-                                if (context instanceof NoteActivity) {
-                                    ((NoteActivity) context).deleteNoteFromDB(deletedNoteId);
+                                    dbHelper.deleteNote(deletedNoteId);
 
                                     // Remove from adapter list and update UI
                                     Items.remove(currentPosition);
                                     notifyDataSetChanged();
 
                                     Toast.makeText(getContext(), "Note \"" + deletedNoteTitle + "\" deleted", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getContext(), "Error: Context is not NoteActivity", Toast.LENGTH_SHORT).show();
-                                }
                             })
                             .setNegativeButton("Cancel", null)
                             .show();
