@@ -1,6 +1,8 @@
 package com.example.notesapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,10 @@ public class Login extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    //should be an if statement where if the login is true, it'll switch activities
+    public void GoToFolder(View view) {
+        Intent i = new Intent(this, FolderActivity.class);
+        startActivity(i);
     }
 }

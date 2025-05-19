@@ -50,19 +50,23 @@
     <Button
         android:id="@+id/btnStart"
         android:layout_width="242dp"
-        android:layout_height="57dp"
+        android:layout_height="61dp"
         android:layout_gravity="center"
 
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_oblong"
         android:fontFamily="@font/montserrat"
 
-        android:paddingLeft="10dp"
+        android:gravity="center"
+        android:onClick="GoToLogin"
 
+        android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="Get Started!"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
+
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -71,21 +75,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="EditText"
-        android:onClick="GoToEdit"/>
+        android:onClick="GoToEdit"
+
+        android:background="@drawable/btn_oblong"
+
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"/>
 
     <Button
         android:id="@+id/btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="FolderCreate"
-        android:onClick="GoToFolder"/>
+        android:onClick="GoToFolder"
+
+        android:background="@drawable/btn_oblong"
+
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"/>
 
     <Button
         android:id="@+id/btnCreateNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="NoteCreate"
-        android:onClick="GoToNote"/>
+        android:onClick="GoToNote"
+        android:background="@drawable/btn_oblong"
+
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"/>
 
 </LinearLayout>
 

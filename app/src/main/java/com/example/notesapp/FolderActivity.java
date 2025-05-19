@@ -1,5 +1,6 @@
 package com.example.notesapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -57,9 +58,15 @@ public class FolderActivity extends AppCompatActivity {
                         Toast.makeText(FolderActivity.this, "Folder name cannot be empty", Toast.LENGTH_SHORT).show();
                     }
                 });
+
                 builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
                 builder.show();
             }
         });
+    }
+
+    public void GoToLogin(View view) {
+        Intent i = new Intent(this, Login.class);
+        startActivity(i);
     }
 }
