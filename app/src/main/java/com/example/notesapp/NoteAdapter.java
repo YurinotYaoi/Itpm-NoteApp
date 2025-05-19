@@ -13,6 +13,7 @@ import android.widget.Toast; // Make sure this import is present
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
@@ -49,18 +50,31 @@ public class NoteAdapter extends ArrayAdapter<Note> {
             public void onClick(View view) {
                 if (currentPosition != ListView.INVALID_POSITION && currentPosition < Items.size()) {
                     Note deletedNote = Items.get(currentPosition);
+                    int deletedNoteId = deletedNote.getId();
                     String deletedNoteTitle = deletedNote.getTitle();
 
-                    if (context instanceof NoteActivity) {
-                        ((NoteActivity) context).deleteNoteFromDB(deletedNote.getId());
-                        Toast.makeText(getContext(), "Note '" + deletedNoteTitle + "' deleted", Toast.LENGTH_SHORT).show();
-                        // The Activity's deleteNoteFromDB will handle updating the list and UI.
-                    } else {
-                        Toast.makeText(getContext(), "Error: Context is not NoteActivity", Toast.LENGTH_SHORT).show();
-                    }
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Delete Note")
+                            .setMessage("Are you sure you want to delete \"" + deletedNoteTitle + "\"?")
+                            .setPositiveButton("Delete", (dialog, which) -> {
+                                if (context instanceof NoteActivity) {
+                                    ((NoteActivity) context).deleteNoteFromDB(deletedNoteId);
+
+                                    // Remove from adapter list and update UI
+                                    Items.remove(currentPosition);
+                                    notifyDataSetChanged();
+
+                                    Toast.makeText(getContext(), "Note \"" + deletedNoteTitle + "\" deleted", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), "Error: Context is not NoteActivity", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
                 }
             }
         });
+
 
         iv_open.setOnClickListener(new View.OnClickListener() {
             @Override

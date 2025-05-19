@@ -15,11 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class EditNotes extends AppCompatActivity {
-    SQLiteDatabase db;
-    Cursor c;
+    private Note note;
 
     Button btn_toggleEdit;
     TextView tv_title;
+    NoteDBHelper dbHelper;
 
     private RichEditor mEditor;
     private TextView mPreview;
@@ -33,34 +33,28 @@ public class EditNotes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_notes);
 
-        db = openOrCreateDatabase("NotesDB", MODE_PRIVATE, null);
-        String sql = "CREATE TABLE IF NOT EXISTS Notes(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, folderId INTEGER)";
-        db.execSQL(sql);
-
         mEditor = findViewById(R.id.editor);
         mPreview = findViewById(R.id.preview);
         tv_title = findViewById(R.id.tvTitle);
         btn_toggleEdit = findViewById(R.id.btnToggleEdit);
 
+        Intent intent = getIntent();
+        noteId = intent.getIntExtra("noteId", -1);
+        dbHelper = new NoteDBHelper(this);
+        note = dbHelper.getNoteById(noteId);
+
+        if (note != null) {
+            tv_title.setText(note.getTitle());
+            mEditor.setHtml(note.getContent());
+        } else {
+            Toast.makeText(this, "Note not found", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         setupEditor();
         setupToolbarButtons();
 
-        Intent intent = getIntent();
-        noteId = intent.getIntExtra("noteId", -1);
-        String noteTitle = intent.getStringExtra("noteTitle");
-        String noteContent = intent.getStringExtra("noteContent");
 
-        if (noteTitle != null) {
-            tv_title.setText(noteTitle);
-        } else {
-            tv_title.setText("New Note"); // Default title for new notes
-        }
-
-        if (noteContent != null) {
-            mEditor.setHtml(noteContent);
-        } else {
-            mEditor.setPlaceholder("Start typing your note...");
-        }
     }
 
     private void setupEditor() {
@@ -68,7 +62,11 @@ public class EditNotes extends AppCompatActivity {
         mEditor.setEditorFontSize(22);
         mEditor.setEditorFontColor(Color.BLACK);
         mEditor.setPadding(10, 10, 10, 10);
-        mEditor.setPlaceholder("Insert text here...");
+        if (note.getContent() != null && !note.getContent().isEmpty()) {
+            mEditor.setHtml(note.getContent());
+        } else {
+            mEditor.setPlaceholder("Insert text here...");
+        }
         mEditor.setOnTextChangeListener(text -> mPreview.setText(text));
         mEditor.setInputEnabled(true);
     }
@@ -111,14 +109,22 @@ public class EditNotes extends AppCompatActivity {
         String updatedContent = mEditor.getHtml();
         String updatedTitle = tv_title.getText().toString().trim();
 
+        // Assuming you have a folderId, otherwise pass a default or store it in note
+        int folderId = note != null ? note.getFolderId() : 0; // adjust if necessary
+
+        // Update note in DB
+        dbHelper.updateNote(noteId, updatedTitle, updatedContent, folderId);
+
         Intent resultIntent = new Intent();
         resultIntent.putExtra("noteId", noteId);
         resultIntent.putExtra("noteTitle", updatedTitle);
         resultIntent.putExtra("noteContent", updatedContent);
 
         setResult(RESULT_OK, resultIntent);
-        finish(); // Go back to NoteActivity
+        finish();
     }
+
+
 
 
 }
