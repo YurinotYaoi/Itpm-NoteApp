@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast; // Make sure this import is present
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,15 +19,23 @@ import java.util.ArrayList;
 
 public class NoteAdapter extends ArrayAdapter<Note> {
 
+    // Define the interface for the callback (this is already in your code, good!)
+    public interface OnNoteRenameListener {
+        void onNoteRenameRequested(int noteId, String currentTitle);
+    }
+
     private Activity context;
     private ArrayList<Note> Items;
     private NoteDBHelper dbHelper;
+    private OnNoteRenameListener renameListener; // <-- New: Field to store the listener
 
-    public NoteAdapter(Activity context, ArrayList<Note> Items, NoteDBHelper dbHelper) {
+    // Constructor: Now accepts the OnNoteRenameListener
+    public NoteAdapter(Activity context, ArrayList<Note> Items, NoteDBHelper dbHelper, OnNoteRenameListener listener) {
         super(context, R.layout.item_note, Items);
         this.context = context;
         this.Items = Items;
         this.dbHelper = dbHelper;
+        this.renameListener = listener; // <-- New: Store the listener
     }
 
     @NonNull
@@ -37,7 +45,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
         LayoutInflater inflater = context.getLayoutInflater();
         View v = inflater.inflate(R.layout.item_note, null, true);
 
-        ImageView iv_fruit = v.findViewById(R.id.ivNote); // Potentially the folder icon
+        // ImageView iv_fruit = v.findViewById(R.id.ivNote); // Potentially the folder icon
         TextView tv_title = v.findViewById(R.id.tvTitle);
         ImageView iv_delete = v.findViewById(R.id.ivDelete);
         ImageView iv_open = v.findViewById(R.id.ivOpen);
@@ -45,7 +53,20 @@ public class NoteAdapter extends ArrayAdapter<Note> {
         Note current_object = Items.get(position);
 
         tv_title.setText("" + current_object.getTitle());
-        final int currentPosition = position;
+        final int currentPosition = position; // Keep this for delete/open
+
+        // --- NEW CODE FOR RENAMING THE TITLE ---
+        tv_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (renameListener != null) {
+                    // Call the callback method on the listener (which will be your NoteActivity)
+                    // Pass the ID and current title of the clicked note
+                    renameListener.onNoteRenameRequested(current_object.getId(), current_object.getTitle());
+                }
+            }
+        });
+        // --- END NEW CODE ---
 
         iv_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,13 +80,13 @@ public class NoteAdapter extends ArrayAdapter<Note> {
                             .setTitle("Delete Note")
                             .setMessage("Are you sure you want to delete \"" + deletedNoteTitle + "\"?")
                             .setPositiveButton("Delete", (dialog, which) -> {
-                                    dbHelper.deleteNote(deletedNoteId);
+                                dbHelper.deleteNote(deletedNoteId);
 
-                                    // Remove from adapter list and update UI
-                                    Items.remove(currentPosition);
-                                    notifyDataSetChanged();
+                                // Remove from adapter list and update UI
+                                Items.remove(currentPosition);
+                                notifyDataSetChanged();
 
-                                    Toast.makeText(getContext(), "Note \"" + deletedNoteTitle + "\" deleted", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Note \"" + deletedNoteTitle + "\" deleted", Toast.LENGTH_SHORT).show();
                             })
                             .setNegativeButton("Cancel", null)
                             .show();
@@ -88,5 +109,4 @@ public class NoteAdapter extends ArrayAdapter<Note> {
 
         return v;
     }
-
 }

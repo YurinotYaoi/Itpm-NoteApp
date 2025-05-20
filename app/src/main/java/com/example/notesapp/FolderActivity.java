@@ -35,6 +35,7 @@ public class FolderActivity extends AppCompatActivity {
         folders.add(new Folder(1, "Math"));
 
         // Initialize the adapter with the (now populated) folders list
+//        folders = dbHelper.getAllFolders();
         myAdapter = new FolderAdapter(FolderActivity.this, folders);
         lv_folder.setAdapter(myAdapter);
 

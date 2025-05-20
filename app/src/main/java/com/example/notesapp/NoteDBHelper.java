@@ -94,4 +94,32 @@ public class NoteDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Notes", "id = ?", new String[]{String.valueOf(id)});
     }
+
+    // Inside your NoteDBHelper.java file
+
+    // Inside your NoteDBHelper.java file
+
+    public Note getNote(int id) { // You can rename this to getNoteById if you prefer, and remove your existing getNoteById
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(
+                "Notes", // <-- Corrected: Use your existing table name string literal
+                new String[]{"id", "title", "content", "folderId"}, // <-- Corrected: Use your existing column name string literals
+                "id" + "=?", // <-- Corrected: Use your existing column name string literal
+                new String[]{String.valueOf(id)},
+                null, null, null, null
+        );
+
+        Note note = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            note = new Note(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("content")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("folderId"))
+            );
+            cursor.close();
+        }
+        db.close(); // Important to close the database connection
+        return note;
+    }
 }

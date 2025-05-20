@@ -1,21 +1,22 @@
 package com.example.notesapp;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType; // Import for InputType
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText; // Import for EditText
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog; // Import for AlertDialog
 import androidx.appcompat.app.AppCompatActivity;
 
 import jp.wasabeef.richeditor.RichEditor;
 
 public class EditNotes extends AppCompatActivity {
-    private Note note;
+    private Note note; // The note object being edited
 
     Button btn_toggleEdit;
     TextView tv_title;
@@ -26,7 +27,7 @@ public class EditNotes extends AppCompatActivity {
 
     private boolean isTextColorBlack = true;
     private boolean isEditing = true;
-    private int noteId = -1; // Initialize with -1 for new notes
+    private int noteId = -1; // Initialize with -1, will be set from intent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,30 +40,73 @@ public class EditNotes extends AppCompatActivity {
         btn_toggleEdit = findViewById(R.id.btnToggleEdit);
 
         Intent intent = getIntent();
-        noteId = intent.getIntExtra("noteId", -1);
-        dbHelper = new NoteDBHelper(this);
-        note = dbHelper.getNoteById(noteId);
+        noteId = intent.getIntExtra("noteId", -1); // Get noteId from intent
+        dbHelper = new NoteDBHelper(this); // Initialize DB Helper
+
+        // Fetch the full Note object from the database using its ID
+        note = dbHelper.getNote(noteId);
 
         if (note != null) {
             tv_title.setText(note.getTitle());
             mEditor.setHtml(note.getContent());
         } else {
             Toast.makeText(this, "Note not found", Toast.LENGTH_SHORT).show();
-            finish();
+            finish(); // Close activity if note not found
+            return; // Exit onCreate
         }
+
+        // --- Make tv_title clickable for renaming ---
+        tv_title.setOnClickListener(v -> showRenameDialog());
+        // --- End New ---
 
         setupEditor();
         setupToolbarButtons();
-
-
     }
+
+    // Method to display the rename dialog
+    private void showRenameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Rename Note");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setText(tv_title.getText().toString()); // Pre-fill with current title
+        input.setSelection(tv_title.getText().length()); // Place cursor at the end
+        builder.setView(input);
+
+        builder.setPositiveButton("Rename", (dialog, which) -> {
+            String newTitle = input.getText().toString().trim();
+            String currentTitle = note.getTitle();
+
+            if (!newTitle.isEmpty() && !newTitle.equals(currentTitle)) {
+                // Update the 'note' object in memory with the new title
+                note.setTitle(newTitle);
+
+                // Update the database using the updated 'note' object's details
+                dbHelper.updateNote(note.getId(), note.getTitle(), note.getContent(), note.getFolderId());
+
+                // Update the TextView on the screen
+                tv_title.setText(newTitle);
+                Toast.makeText(this, "Note renamed to '" + newTitle + "'", Toast.LENGTH_SHORT).show();
+            } else if (newTitle.isEmpty()) {
+                Toast.makeText(this, "Note title cannot be empty", Toast.LENGTH_SHORT).show();
+            } else { // Title was not changed
+                Toast.makeText(this, "Note title not changed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
 
     private void setupEditor() {
         mEditor.setEditorHeight(200);
         mEditor.setEditorFontSize(22);
         mEditor.setEditorFontColor(Color.BLACK);
         mEditor.setPadding(10, 10, 10, 10);
-        if (note.getContent() != null && !note.getContent().isEmpty()) {
+        // Ensure note.getContent() is not null before setting HTML
+        if (note != null && note.getContent() != null && !note.getContent().isEmpty()) {
             mEditor.setHtml(note.getContent());
         } else {
             mEditor.setPlaceholder("Insert text here...");
@@ -109,22 +153,27 @@ public class EditNotes extends AppCompatActivity {
         String updatedContent = mEditor.getHtml();
         String updatedTitle = tv_title.getText().toString().trim();
 
-        // Assuming you have a folderId, otherwise pass a default or store it in note
-        int folderId = note != null ? note.getFolderId() : 0; // adjust if necessary
+        if (note != null) { // Ensure note object exists
+            // Update the 'note' object in memory first
+            note.setTitle(updatedTitle);
+            note.setContent(updatedContent);
+            // folderId remains the same unless you add UI to change it
 
-        // Update note in DB
-        dbHelper.updateNote(noteId, updatedTitle, updatedContent, folderId);
+            // Then update the database using the updated note object's properties
+            dbHelper.updateNote(note.getId(), note.getTitle(), note.getContent(), note.getFolderId());
 
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("noteId", noteId);
-        resultIntent.putExtra("noteTitle", updatedTitle);
-        resultIntent.putExtra("noteContent", updatedContent);
+            // You can set a result here if you want to pass data back explicitly,
+            // but onResume() in NoteActivity handles the refresh effectively.
+            // Intent resultIntent = new Intent();
+            // resultIntent.putExtra("noteId", note.getId());
+            // resultIntent.putExtra("noteTitle", note.getTitle());
+            // resultIntent.putExtra("noteContent", note.getContent());
+            // setResult(RESULT_OK, resultIntent);
 
-//        setResult(RESULT_OK, resultIntent); useless thing gemini put
-        finish();
+            Toast.makeText(this, "Note saved!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error: Cannot save note.", Toast.LENGTH_SHORT).show();
+        }
+        // finish(); // Consider if you want to finish the activity immediately after saving
     }
-
-
-
-
 }
