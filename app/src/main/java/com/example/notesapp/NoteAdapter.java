@@ -103,6 +103,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
                 intent.putExtra("noteId", current_object.getId());
                 intent.putExtra("noteTitle", current_object.getTitle());
                 intent.putExtra("noteContent", current_object.getContent());
+                intent.putExtra("folderId", current_object.getFolderId());
                 context.startActivity(intent);
             }
         });

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     public void GoToLogin(View view) {
-        Intent i = new Intent(this, Login.class);
+        Intent i = new Intent(this, Folder.class);
         startActivity(i);
     }
 

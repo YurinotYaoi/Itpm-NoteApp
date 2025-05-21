@@ -18,7 +18,7 @@ import jp.wasabeef.richeditor.RichEditor;
 public class EditNotes extends AppCompatActivity {
     private Note note; // The note object being edited
 
-    Button btn_toggleEdit;
+    Button btn_toggleEdit, btn_back;
     TextView tv_title;
     NoteDBHelper dbHelper;
 
@@ -38,6 +38,7 @@ public class EditNotes extends AppCompatActivity {
         mPreview = findViewById(R.id.preview);
         tv_title = findViewById(R.id.tvTitle);
         btn_toggleEdit = findViewById(R.id.btnToggleEdit);
+        btn_back = findViewById(R.id.btnBack);
 
         Intent intent = getIntent();
         noteId = intent.getIntExtra("noteId", -1); // Get noteId from intent
@@ -61,6 +62,13 @@ public class EditNotes extends AppCompatActivity {
 
         setupEditor();
         setupToolbarButtons();
+
+        btn_back.setOnClickListener(v -> {
+            saveNote();
+            finish();
+        });
+
+
     }
 
     // Method to display the rename dialog
